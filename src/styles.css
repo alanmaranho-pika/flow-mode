@@ -1,0 +1,211 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ===== Fonts =====
+ * Figma uses "Telka" (paid). Inter is the closest free geometric grotesk.
+ * "Archivo Black" is the chunky display face for PROJECT TITLE / scene titles.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Archivo+Black&display=swap");
+
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Archivo Black", "Inter", sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-canvas: var(--canvas);
+  --color-ink: var(--ink);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-ink-tertiary: var(--ink-tertiary);
+  --color-ink-quaternary: var(--ink-quaternary);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-lilac: var(--lilac);
+  --color-lilac-soft: var(--lilac-soft);
+  --color-lilac-deep: var(--lilac-deep);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+}
+
+:root {
+  --radius: 18px;
+
+  /* Pika canvas + ink */
+  --canvas: #fcfaf7;
+  --ink: #0d0d0d;
+  --ink-secondary: #222222;
+  --ink-tertiary: rgba(34, 34, 34, 0.6);
+  --ink-quaternary: rgba(34, 34, 34, 0.5);
+  --surface: #ffffff;
+  --surface-2: #fcfaf7;
+
+  --lilac: #cfc3ff;
+  --lilac-soft: rgba(207, 195, 255, 0.2);
+  --lilac-deep: #806eca;
+  --playhead: #f97316;
+
+  --background: var(--canvas);
+  --foreground: var(--ink);
+  --card: #ffffff;
+  --card-foreground: var(--ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: #ffffff;
+  --secondary: #f1ede6;
+  --secondary-foreground: var(--ink);
+  --muted: #f1ede6;
+  --muted-foreground: var(--ink-tertiary);
+  --accent: var(--lilac);
+  --accent-foreground: var(--ink);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: #ffffff;
+  --border: rgba(13, 13, 13, 0.08);
+  --input: rgba(13, 13, 13, 0.1);
+  --ring: var(--lilac-deep);
+}
+
+.dark {
+  /* Keep same — single theme app */
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html, body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    overflow: hidden;
+  }
+}
+
+/* ============ Reveal animations ============ */
+
+/* Per-character typewriter with lilac gradient mask on the leading edge */
+.text-reveal {
+  --reveal-chars: 1;
+  display: inline-block;
+}
+.text-reveal > span {
+  display: inline-block;
+  opacity: 0;
+  white-space: pre;
+  animation: char-in 320ms ease forwards;
+  animation-delay: calc(var(--char-i, 0) * 28ms);
+}
+.text-reveal > span.is-leading {
+  background: linear-gradient(90deg, var(--ink) 0%, var(--lilac-deep) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+@keyframes char-in {
+  from { opacity: 0; transform: translateY(0.25em); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0);     filter: blur(0); }
+}
+
+/* Shimmer sweep — single pass on mount */
+.shimmer-reveal {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.shimmer-reveal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(207, 195, 255, 0.55) 50%,
+    transparent 80%
+  );
+  transform: translateX(-100%);
+  animation: shimmer 1100ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  pointer-events: none;
+  z-index: 1;
+}
+@keyframes shimmer {
+  to { transform: translateX(200%); }
+}
+
+/* Ephemeral fade-out */
+.ephemeral-out {
+  animation: ephemeral-fade 280ms ease forwards;
+}
+@keyframes ephemeral-fade {
+  to { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; transform: translateY(-4px); }
+}
+
+/* Soft float for tilted cards */
+.tilt-left  { transform: rotate(-6deg); transition: transform 280ms ease; }
+.tilt-right { transform: rotate(6deg);  transition: transform 280ms ease; }
+.tilt-left:hover,
+.tilt-right:hover { transform: rotate(0deg) scale(1.02); }
+
+/* Hide scrollbars */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+/* Pulsing dot */
+@keyframes thinking-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.85); }
+  50%      { opacity: 1;   transform: scale(1); }
+}
+.thinking-dot {
+  animation: thinking-pulse 1.2s ease-in-out infinite;
+}
+.thinking-dot:nth-child(2) { animation-delay: 0.15s; }
+.thinking-dot:nth-child(3) { animation-delay: 0.3s; }
+
+/* Ken-Burns slow zoom for animatic playback */
+@keyframes kenburns {
+  0%   { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.08) translate(-1%, -1%); }
+}
+.kenburns {
+  animation: kenburns var(--kb-dur, 4s) ease-out forwards;
+  transform-origin: center;
+}
+
+/* Animatic crossfade */
+@keyframes animatic-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animatic-in {
+  animation: animatic-in 360ms ease-out;
+}
+
